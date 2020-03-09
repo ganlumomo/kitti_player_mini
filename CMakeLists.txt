@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   pcl_conversions
   eigen_conversions
-  tf
   tf_conversions
 )
 

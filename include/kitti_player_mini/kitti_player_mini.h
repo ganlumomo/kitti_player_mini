@@ -4,19 +4,16 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-
-#include <Eigen/Geometry>
-#include <opencv2/core/core.hpp>
-#include <pcl_conversions/pcl_conversions.h>
 #include <tf/transform_broadcaster.h>
 #include <tf_conversions/tf_eigen.h>
 
+#include <Eigen/Geometry>
 #include <eigen_conversions/eigen_msg.h>
-#include <vector>
-
+#include <pcl_conversions/pcl_conversions.h>
 #include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+#include <vector>
 
 class KittiPlayerMini{
   public:

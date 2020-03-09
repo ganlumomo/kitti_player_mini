@@ -7,7 +7,6 @@ int main(int argc, char **argv) {
 
   int scan_num = 1100;
   std::string sequence_dir = "/media/ganlu/PERL-SSD/Datasets/KITTI/dataset/sequences/06/";
-  
 
   KittiPlayerMini kitti_player_mini(nh);
   kitti_player_mini.read_left_camera_poses("/media/ganlu/PERL-SSD/Datasets/KITTI/dataset/poses/06.txt");
