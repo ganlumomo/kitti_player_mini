@@ -21,7 +21,7 @@ class KittiPlayerMini{
       left_color_image_publisher_ = nh_.advertise<sensor_msgs::Image>("left_color_image", 1);
       depth_image_publisher_ = nh_.advertise<sensor_msgs::Image>("depth_image", 1);
       velodyne_publisher_ = nh_.advertise<sensor_msgs::PointCloud2>("velodyne", 1);
-      left_camera_pose_publisher_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("left_camera_pose", 1);
+      left_color_camera_pose_publisher_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("left_color_camera_pose", 1);
     }
 
     void process_scans(std::string sequence_dir, int scan_num) {
@@ -41,19 +41,23 @@ class KittiPlayerMini{
                                  0, 0, 1, 0,
                                  0,-1, 0, 1,
                                  0, 0, 0, 1;
-        left_camera_pose = init_trans_to_ground * left_camera_pose;
+        Eigen::Matrix4d T_cam0_cam2 = Eigen::Matrix4d::Identity();
+        T_cam0_cam2(0, 3) = 4.688783000000e+01 / 7.070912000000e+02;
+        T_cam0_cam2(1, 3) = 1.178601000000e-01 / 7.070912000000e+02;
+        //T_cam0_cam2(2, 3) = 6.203223000000e-03;
+        Eigen::Matrix4d left_color_camera_pose = init_trans_to_ground * left_camera_pose * T_cam0_cam2;
         tf::Transform tf_pose;
-        Eigen::Affine3d eigen_affine_pose(left_camera_pose);
+        Eigen::Affine3d eigen_affine_pose(left_color_camera_pose);
         tf::transformEigenToTF(eigen_affine_pose, tf_pose);
 
         // Read calib
         Eigen::Matrix4d Tr;
         Tr << -1.857739385241e-03, -9.999659513510e-01, -8.039975204516e-03, -4.784029760483e-03,
-              -6.481465826011e-03, 8.051860151134e-03, -9.999466081774e-01, -7.337429464231e-02, 
+              -6.481465826011e-03, 8.051860151134e-03, -9.999466081774e-01, -7.337429464231e-02,
               9.999773098287e-01, -1.805528627661e-03, -6.496203536139e-03, -3.339968064433e-01,
               0, 0, 0, 1;
         tf::Transform tf_Tr;
-        Eigen::Affine3d eigen_affine_Tr(Tr);
+        Eigen::Affine3d eigen_affine_Tr(T_cam0_cam2.inverse() * Tr);
         tf::transformEigenToTF(eigen_affine_Tr, tf_Tr);
       
         char scan_id_c[256];
@@ -85,8 +89,8 @@ class KittiPlayerMini{
         depth_msg.header.stamp = t_cur;
  
         // publish tf
-        br_.sendTransform(tf::StampedTransform(tf_pose, t_cur, "map", "left_camera"));
-        br_.sendTransform(tf::StampedTransform(tf_Tr, t_cur, "left_camera", "velodyne"));
+        br_.sendTransform(tf::StampedTransform(tf_pose, t_cur, "map", "left_color_camera"));
+        br_.sendTransform(tf::StampedTransform(tf_Tr, t_cur, "left_color_camera", "velodyne"));
        
         // publish msgs
         velodyne_publisher_.publish(cloud_msg);
@@ -145,7 +149,7 @@ class KittiPlayerMini{
       pose_msg.pose.covariance[6*5+5] = 0.0;
 
       // publish
-      left_camera_pose_publisher_.publish(pose_msg);
+      left_color_camera_pose_publisher_.publish(pose_msg);
     }
         
     bool read_left_camera_poses(const std::string pose_name) {
@@ -205,6 +209,6 @@ class KittiPlayerMini{
     ros::Publisher left_color_image_publisher_;
     ros::Publisher depth_image_publisher_;
     ros::Publisher velodyne_publisher_;
-    ros::Publisher left_camera_pose_publisher_;
+    ros::Publisher left_color_camera_pose_publisher_;
     tf::TransformBroadcaster br_;
 };
