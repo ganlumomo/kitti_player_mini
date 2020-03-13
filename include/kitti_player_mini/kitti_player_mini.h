@@ -42,9 +42,9 @@ class KittiPlayerMini{
                                  0,-1, 0, 1,
                                  0, 0, 0, 1;
         Eigen::Matrix4d T_cam0_cam2 = Eigen::Matrix4d::Identity();
-        T_cam0_cam2(0, 3) = 4.688783000000e+01 / 7.070912000000e+02;
-        T_cam0_cam2(1, 3) = 1.178601000000e-01 / 7.070912000000e+02;
-        //T_cam0_cam2(2, 3) = 6.203223000000e-03;
+        T_cam0_cam2(0, 3) = -3.334597000000e+02 / 7.070912000000e+02;
+        T_cam0_cam2(1, 3) = 1.930130000000e+00 / 7.070912000000e+02;
+        T_cam0_cam2(2, 3) = 3.318498000000e-03;
         Eigen::Matrix4d left_color_camera_pose = init_trans_to_ground * left_camera_pose * T_cam0_cam2;
         tf::Transform tf_pose;
         Eigen::Affine3d eigen_affine_pose(left_color_camera_pose);
